@@ -8,6 +8,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\MappedSuperClass
+ * @ORM\HasLifecycleCallbacks
  */
 abstract class FileAsset implements FileAssetInterface
 {
@@ -96,7 +97,7 @@ abstract class FileAsset implements FileAssetInterface
      */
     protected function getAssetRootDir()
     {
-        return __DIR__ . '/../../../../../web/' . $this->getAssetDir();
+        return __DIR__ . '/../../../../web/' . $this->getAssetDir();
     }
     
     /**
@@ -230,5 +231,69 @@ abstract class FileAsset implements FileAssetInterface
         file_put_contents($absolutePath, $this->data);
         
         return $this;
+    }
+    
+    /**
+     * @ORM\PostPersist()
+     * @ORM\PostUpdate()
+     */
+    public function upload()
+    {
+        // the file property can be empty if the field is not required
+        if (null === $this->data) {
+            return;
+        }
+        // you must throw an exception here if the file cannot be moved
+        // so that the entity is not persisted to the database
+        // which the UploadedFile move() method does
+        $this->data->move($this->getAssetRootDir(), $this->getName());
+        unset($this->data);
+    }
+    
+    /**
+     * @ORM\PrePersist()
+     * @ORM\PreUpdate()
+     */
+    public function preUpdate()
+    {
+        $this->modifiedAt = new \DateTime();
+        if (null != $this->data) {
+            $this->setName(uniqid().'.jpg');//.$this->data->guessExtension());
+        }
+        if ($this->getName() == null) {
+            $this->setName($this->getName());
+        }
+    }
+    
+     /**
+     * Set the absolute path in the non-persistent variable file to be used in the postRemove if the remove is succesful
+     * 
+     * @ORM\PreRemove()
+     */
+    public function preRemove()
+    {
+        $name = $this->getName();        
+        if ($name != null) {
+            $this->data = $this->getAbsolutePath();
+        }
+    }
+    
+     /**
+     * Deletes the file from the system completely
+     * Reads the file variable which must have temporally the absolute path of the path setted in the PreRemove listener
+     *
+     * @ORM\PostRemove()
+     */
+    public function postRemove()
+    {
+        $absolutePath = $this->getData();
+        if ($absolutePath != null) {
+            try {
+                unlink($absolutePath);
+            }
+            catch (\Exception $e) {
+                
+            }
+        }
     }
 }
