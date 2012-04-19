@@ -19,4 +19,4 @@ interface AssetFactoryInterface
     public function getAssetClass();
 }
 
-?>
+
