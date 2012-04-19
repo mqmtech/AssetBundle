@@ -1,0 +1,11 @@
+MQMAssetBundle_homepage:
+    pattern:  /hello/{name}
+    defaults: { _controller: MQMAssetBundle:Default:index }
+
+MQMAssetBundle_show_asset:
+    pattern:  /show/{name}
+    defaults: { _controller: MQMAssetBundle:Default:show }
+    
+MQMAssetBundle_create_asset:
+  pattern:  /create/{name}
+  defaults: { _controller: MQMAssetBundle:Default:create }
