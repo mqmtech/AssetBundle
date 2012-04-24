@@ -4,14 +4,14 @@ namespace MQM\AssetBundle\Helper;
 
 
 use Symfony\Component\HttpKernel\KernelInterface;
-use MQM\ToolsBundle\IO\ReaderInterface;
+use MQM\ToolsBundle\IO\PropertiesInterface;
 
 class AssetFileHelper
 {
     private $kernel;
     private $configReader;
     
-    public function __construct(KernelInterface $kernel, ReaderInterface $configReader)
+    public function __construct(KernelInterface $kernel, PropertiesInterface $configReader)
     {
         $this->kernel = $kernel;
         $this->configReader = $configReader;
