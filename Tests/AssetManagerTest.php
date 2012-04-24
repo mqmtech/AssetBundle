@@ -2,9 +2,9 @@
 
 namespace MQM\AssetBundle\Test\Asset;
 
-use MQM\AssetBundle\Asset\AssetInterface;
+
 use MQM\AssetBundle\Model\AssetManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Tests\Functional\AppKernel;
+
 
 class AssetManagerTest extends \Symfony\Bundle\FrameworkBundle\Test\WebTestCase
 {   

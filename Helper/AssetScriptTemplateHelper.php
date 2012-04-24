@@ -5,9 +5,9 @@ namespace MQM\AssetBundle\Helper;
 use MQM\AssetBundle\Helper\AssetTemplateHelperInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\KernelInterface;
-use MQM\AssetBundle\Helper\AssetFileHelper;
-use MQM\AssetBundle\Helper\AssetDatabaseHelper;
-use MQM\ToolsBundle\Utils;
+
+
+
 
 class AssetScriptTemplateHelper implements AssetTemplateHelperInterface
 {

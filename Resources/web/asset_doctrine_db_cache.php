@@ -7,8 +7,8 @@ ini_set("memory_limit","512M");
 
 require_once __DIR__.'/../vendor/symfony/src/Symfony/Component/ClassLoader/UniversalClassLoader.php';
 
-use Symfony\Component\ClassLoader\UniversalClassLoader;
-use Doctrine\Common\Annotations\AnnotationRegistry;
+
+
 
 $loader = new UniversalClassLoader();
 $loader->registerNamespaces(array(
@@ -30,7 +30,7 @@ AnnotationRegistry::registerLoader(function($class) use ($loader) {
 });
 AnnotationRegistry::registerFile(__DIR__.'/../vendor/doctrine/lib/Doctrine/ORM/Mapping/Driver/DoctrineAnnotations.php');
 
-use Symfony\Component\HttpFoundation\Request;
+
 use MQM\AssetBundle\Doctrine\DoctrineRegistry;
 use MQM\ToolsBundle\Utils;
 

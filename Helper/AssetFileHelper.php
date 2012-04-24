@@ -2,7 +2,7 @@
 
 namespace MQM\AssetBundle\Helper;
 
-use Symfony\Component\HttpFoundation\Request;
+
 use Symfony\Component\HttpKernel\KernelInterface;
 use MQM\ToolsBundle\IO\ReaderInterface;
 
