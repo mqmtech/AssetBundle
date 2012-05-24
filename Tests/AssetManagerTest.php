@@ -44,7 +44,7 @@ class AssetManagerTest extends \Symfony\Bundle\FrameworkBundle\Test\WebTestCase
     {
         $this->assertNotNull($this->assetManager);
     }
-    
+
     private function resetAssets()
     {
         $assets = $this->assetManager->findAssets();

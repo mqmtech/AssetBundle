@@ -51,21 +51,37 @@ abstract class FileAsset implements FileAssetInterface
      * @Assert\File(maxSize="6000000")
      */
     public $data;
+
+    /**
+     * Virtual field that stores the previous name to be deleted when postPersisting the entity
+     */
+    public $oldAbsolutePath;
     
     public function __construct()
     {
+        $this->name = null;
         $this->setFileUpdated(false);
         $this->createdAt = new \DateTime();
     }
     
     function __clone()
     {
-        $name = uniqid().'.jpg';//.$this->data->guessExtension());
-        copy($this->getAbsolutePath(), $this->getAssetRootDir() . '/' . $name);
-        $this->setName($name);
-        if ($this->getName() == null) {
-            $this->setName($this->getName());
+        $cacheRootDir = $this->getCacheRootDir();
+        $clonedName = $this->cloneFile($cacheRootDir);
+        $this->setName($clonedName);
+    }
+
+    public function cloneFile($baseRootDir = null, $fileName = null)
+    {
+        $baseRootDir = $baseRootDir == null ? $this->getAssetRootDir() : $baseRootDir;
+        if (null != $this->getName()) {
+            $fileName = $fileName == null ? $name = uniqid().'.jpg' : $fileName;
+            copy($this->getAbsolutePath(), $baseRootDir . '/' . $fileName);
+
+            return $fileName;
         }
+
+        return null;
     }
     
     /**
@@ -92,6 +108,16 @@ abstract class FileAsset implements FileAssetInterface
         return null === $this->getName() ? null : $this->getAssetRootDir() . '/' . $this->getName();
     }
 
+    protected function getAbsoluteCachePath()
+    {
+        return null === $this->getName() ? null : $this->getCacheRootDir() . '/' . $this->getName();
+    }
+
+    protected function getCacheRootDir()
+    {
+        return __DIR__ . '/../../../../app/cache';
+    }
+
     /**
      * @return {@inheritDoc}
      */
@@ -101,7 +127,6 @@ abstract class FileAsset implements FileAssetInterface
     }
     
     /**
-     *
      * @return string get rid of the __DIR__ so it doesn't screw when displaying uploaded doc/image in the view.
      */
     protected function getAssetDir()
@@ -232,24 +257,7 @@ abstract class FileAsset implements FileAssetInterface
         
         return $this;
     }
-    
-    /**
-     * @ORM\PostPersist()
-     * @ORM\PostUpdate()
-     */
-    public function upload()
-    {
-        // the file property can be empty if the field is not required
-        if (null === $this->data) {
-            return;
-        }
-        // you must throw an exception here if the file cannot be moved
-        // so that the entity is not persisted to the database
-        // which the UploadedFile move() method does
-        $this->data->move($this->getAssetRootDir(), $this->getName());
-        unset($this->data);
-    }
-    
+
     /**
      * @ORM\PrePersist()
      * @ORM\PreUpdate()
@@ -258,10 +266,55 @@ abstract class FileAsset implements FileAssetInterface
     {
         $this->modifiedAt = new \DateTime();
         if (null != $this->data) {
-            $this->setName(uniqid().'.jpg');//.$this->data->guessExtension());
+            $this->oldAbsolutePath = $this->getAbsolutePath();
+            $this->setName(uniqid() . '.jpg');//.$this->data->guessExtension());
         }
-        if ($this->getName() == null) {
-            $this->setName($this->getName());
+    }
+    
+    /**
+     * @ORM\PostPersist()
+     * @ORM\PostUpdate()
+     */
+    public function upload()
+    {
+        //If there is no data from post try to load from cache
+        if (null === $this->data) {
+            $this->uploadFromCache();
+        }
+        else {
+            $this->uploadFromPostData();
+        }
+        $this->removeOldFile();
+    }
+
+    private function uploadFromPostData()
+    {
+        $this->data->move($this->getAssetRootDir(), $this->getName());
+        unset($this->data);
+    }
+
+    private function uploadFromCache()
+    {
+        $absoluteCachePath = $this->getAbsoluteCachePath();
+        if ($absoluteCachePath != null) {
+            if (file_exists($absoluteCachePath)) {
+                $absolutePath = $this->getAbsolutePath();
+                copy($absoluteCachePath, $absolutePath);
+                unlink($absoluteCachePath);
+            }
+        }
+    }
+
+    private function removeOldFile()
+    {
+        if (null != $this->oldAbsolutePath) {
+            try {
+                unlink($this->oldAbsolutePath);
+                $this->oldAbsolutePath = null;
+            }
+            catch (\Exception $e){
+
+            }
         }
     }
     
@@ -292,8 +345,20 @@ abstract class FileAsset implements FileAssetInterface
                 unlink($absolutePath);
             }
             catch (\Exception $e) {
-                
+
             }
+        }
+    }
+
+    public function deleteFile()
+    {
+        $absolutePath = $this->getAbsolutePath();
+        try {
+            unlink($absolutePath);
+            $this->setName(null);
+        }
+        catch (\Exception $e) {
+
         }
     }
 }

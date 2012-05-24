@@ -40,6 +40,6 @@ class AssetScriptTemplateHelper implements AssetTemplateHelperInterface
 
     private function getEnvironment()
     {
-        return $this->kernel->getEnvironment();        
+        return $this->kernel->getEnvironment();
     }
 }

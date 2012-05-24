@@ -50,4 +50,15 @@ interface FileAssetInterface extends AssetInterface
      * @return datetime 
      */
     public function getModifiedAt();
+
+    /**
+     * @return FileAssetInterface
+     */
+    public function deleteFile();
+
+    /**
+     * @param string $baseRootDir
+     * @return string filename
+     */
+    public function cloneFile($baseRootDir = null, $fileName = null);
 }
