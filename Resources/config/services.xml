@@ -38,7 +38,7 @@
         
         <service id="mqm_asset.file_helper" class="%mqm_asset.file_helper.class%" public="true">
             <argument type="service" id="kernel"/>
-            <argument type="service" id="mqm_tools.ini_reader"/>
+            <argument type="service" id="mqm_tools.ini_reader" strict="false"/>
         </service>        
     </services>
 </container>
