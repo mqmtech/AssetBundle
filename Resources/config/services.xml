@@ -39,10 +39,10 @@
         
         <service id="mqm_asset.file_helper" class="%mqm_asset.file_helper.class%" public="true">
             <argument type="service" id="kernel"/>
-            <argument type="service" id="mqm_tools.ini_reader" strict="false"/>
+            <argument type="service" id="mqm_asset.ini_reader" strict="false"/>
         </service>
 
-        <service id="mqm_tools.ini_reader" class="%mqm_asset.ini_reader.class%" public="true" scope="prototype">
+        <service id="mqm_asset.ini_reader" class="%mqm_asset.ini_reader.class%" public="true" scope="prototype">
         </service>
     </services>
 </container>
