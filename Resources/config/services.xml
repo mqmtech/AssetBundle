@@ -10,6 +10,7 @@
         <parameter key="mqm_asset.file_helper.class">MQM\AssetBundle\Helper\AssetFileHelper</parameter>
         <parameter key="mqm_asset.template_direct_link_helper.class">MQM\AssetBundle\Helper\AssetDirectLinkTemplateHelper</parameter>
         <parameter key="mqm_asset.template_script_helper.class">MQM\AssetBundle\Helper\AssetScriptTemplateHelper</parameter>
+        <parameter key="mqm_asset.ini_reader.class">MQM\AssetBundle\Helper\IniProperties</parameter>
     </parameters>
 
     <services>    
@@ -39,6 +40,9 @@
         <service id="mqm_asset.file_helper" class="%mqm_asset.file_helper.class%" public="true">
             <argument type="service" id="kernel"/>
             <argument type="service" id="mqm_tools.ini_reader" strict="false"/>
-        </service>        
+        </service>
+
+        <service id="mqm_tools.ini_reader" class="%mqm_asset.ini_reader.class%" public="true" scope="prototype">
+        </service>
     </services>
 </container>
